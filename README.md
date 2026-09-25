@@ -30,3 +30,9 @@ Run the production preview and `BASE_URL=http://localhost:3001 pnpm test:e2e` (P
 ## Scope and handoff
 
 The supplied master brief is broader than this frontend implementation. See docs/architecture.md for the precise implemented scope and remaining integrations. This is not a production commerce, authentication, tracking, or payment system. No real merchant details or legal policies have been invented.
+
+## Separate backend API
+
+A backend-only service is now available in `backend/`. Run `pnpm backend:dev` from this directory to build and start it on port 4000. See [backend setup](backend/README.md), [API contracts](backend/docs/api.md), and [database handoff](backend/docs/database-handoff.md).
+
+No database is connected; API state is in memory and resets on restart. The existing frontend continues to use its original mocks and has not been connected to the API. Real Razorpay and OTP integrations remain explicitly unavailable until persistence and providers are added.
