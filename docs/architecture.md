@@ -21,3 +21,17 @@ The small demo catalog is available to client filters and cart reconciliation. T
 The shipped UI is English. Messages can be extracted into a translation dictionary for Hindi; no nonfunctional toggle is displayed.
 
 WebMCP: a feature-detected, read-only `read_demo_shopping_bag` tool exposes the same current cart IDs/variants/quantities and rejects nonempty input. Unsupported browsers are unaffected. A native supported WebMCP context was unavailable, so end-to-end WebMCP validation is not claimed.
+
+## Frontend feature pattern
+
+Keep routes in `src/app` responsible for metadata, static parameters, and composing feature components. Keep server pages and the root layout as Server Components; add client boundaries only where interaction is needed.
+
+Within each feature, separate three responsibilities:
+
+- **Plain TypeScript logic:** deterministic rules without React or browser state. `catalog/query.ts` parses URL filters and selects/sorts/paginates supplied products. `cart/reducer.ts` owns cart transitions, reusing the existing mock product lookup and stock limits.
+- **Hooks and providers:** connect those rules to external state. `catalog/use-catalog.ts` adapts Next.js navigation; the URL remains the source of truth for filters. `cart/store.tsx` handles context, hydration, and persistence.
+- **UI components:** render values and invoke typed callbacks. `catalog/catalog-filters.tsx` has no routing dependency; `catalog/catalog.tsx` composes the hook, filters, and existing product cards for Shop, Search, and Collections.
+
+Keep feature-specific code together. Promote a component to `components/ui` only when it is shared across features. Reuse contracts from `contracts` and existing service adapters. Do not introduce generic repositories, new state libraries, or barrel exports just to add layers. Existing mock and delivery API behavior remains unchanged by this refactor.
+
+Test plain logic with unit tests and the routing adapter with integration tests. New catalog filters belong in the query type/parser/selector, then the filter UI; they should not require duplicating filtering logic in route pages.

@@ -7,45 +7,10 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { CartLine, Order, Address } from "@/contracts";
+import type { Order, Address } from "@/contracts";
 import { restoreCart } from "@/mocks/services";
 import { getProduct } from "@/mocks/catalog";
-type Action =
-  | { type: "load"; lines: CartLine[] }
-  | { type: "add"; id: string; variant: CartLine["variant"] }
-  | { type: "quantity"; id: string; variant: string; quantity: number }
-  | { type: "clear" };
-export function cartReducer(state: CartLine[], action: Action): CartLine[] {
-  if (action.type === "load") return action.lines;
-  if (action.type === "clear") return [];
-  if (action.type === "quantity")
-    return state
-      .map((l) =>
-        l.id === action.id && l.variant === action.variant
-          ? {
-              ...l,
-              quantity: Math.min(
-                10,
-                getProduct(l.id)?.stock ?? 0,
-                Math.max(0, action.quantity),
-              ),
-            }
-          : l,
-      )
-      .filter((l) => l.quantity > 0);
-  const p = getProduct(action.id);
-  if (!p?.stock) return state;
-  const found = state.find(
-    (l) => l.id === action.id && l.variant === action.variant,
-  );
-  return found
-    ? state.map((l) =>
-        l === found
-          ? { ...l, quantity: Math.min(l.quantity + 1, p.stock, 10) }
-          : l,
-      )
-    : [...state, { id: action.id, variant: action.variant, quantity: 1 }];
-}
+import { cartReducer } from "./reducer";
 function useStoreValue() {
   const [lines, dispatch] = useReducer(cartReducer, []);
   const [wishlist, setWishlist] = useState<string[]>([]);
