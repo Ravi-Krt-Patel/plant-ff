@@ -29,10 +29,15 @@ export const addressSchema = z.object({
   landmark: z.string(),
   pin: z.string().regex(/^\d{6}$/, "Enter a six-digit PIN"),
   instructions: z.string(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  latitude: z.number().finite().min(-90).max(90).optional(),
+  longitude: z.number().finite().min(-180).max(180).optional(),
 });
 export type Address = z.infer<typeof addressSchema>;
 export type PaymentStatus = "success" | "pending" | "failure" | "dismissed";
 export type Order = {
+  deliveryAddress?: Address;
   id: string;
   lines: CartLine[];
   total: number;

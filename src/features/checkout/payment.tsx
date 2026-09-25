@@ -8,18 +8,33 @@ export default function Payment({
   method,
   onResult,
   onClose,
+  onConfirm,
 }: {
   orderId: string;
   method: string;
   onResult: (s: PaymentStatus) => void;
   onClose: () => void;
+  onConfirm?: (s: PaymentStatus) => Promise<PaymentStatus>;
 }) {
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
   const settle = async (s: PaymentStatus) => {
     setBusy(true);
-    const r = await paymentService.confirm(orderId, s);
-    if (r.ok) onResult(r.data);
-    setBusy(false);
+    setError("");
+    try {
+      if (onConfirm) onResult(await onConfirm(s));
+      else {
+        const r = await paymentService.confirm(orderId, s);
+        if (r.ok) onResult(r.data);
+        else setError(r.message);
+      }
+    } catch (e) {
+      setError(
+        e instanceof Error ? e.message : "Payment confirmation is unavailable.",
+      );
+    } finally {
+      setBusy(false);
+    }
   };
   return (
     <Modal
@@ -63,6 +78,11 @@ export default function Payment({
         </button>
       </div>
       {busy && <p role="status">Simulating confirmation…</p>}
+      {error && (
+        <p className="error-text" role="alert">
+          {error}
+        </p>
+      )}
     </Modal>
   );
 }

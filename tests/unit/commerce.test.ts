@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { money, products } from "../../src/mocks/catalog";
 import { restoreCart, quote, isServiceable } from "../../src/mocks/services";
-import { cartReducer } from "../../src/features/cart/store";
+import { cartReducer } from "../../src/features/cart/reducer";
 import { addressSchema } from "../../src/contracts";
 describe("demo commerce boundaries", () => {
   it("formats integer paise", () => {

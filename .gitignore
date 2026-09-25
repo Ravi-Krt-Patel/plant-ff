@@ -8,3 +8,5 @@ test-results/
 playwright-report/
 *.tsbuildinfo
 .env.local
+backend/dist/
+backend/.env
