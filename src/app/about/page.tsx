@@ -7,7 +7,7 @@ export default function Page() {
       <article className="article">
         <p className="eyebrow">A SLOWER MOMENT. A GREENER EVERYDAY.</p>
         <h1>
-          Rooted in Kashi.
+          Rooted in Kashi..
           <br />
           Growing with you.
         </h1>

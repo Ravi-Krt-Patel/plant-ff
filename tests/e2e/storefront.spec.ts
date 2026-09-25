@@ -67,14 +67,20 @@ test("payment failure preserves bag and lazy zoom works", async ({ page }) => {
     page.getByRole("heading", { name: "Snake Plant Laurentii" }),
   ).toBeVisible();
 });
-test("tracking remains usable before map loads", async ({ page }) => {
+test("legacy tracking shows status without inventing delivery coordinates", async ({
+  page,
+}) => {
   await page.goto("/track-order/KG-SAMPLE-001");
   await expect(
     page.getByText("Out for demo delivery", { exact: true }),
   ).toBeVisible();
-  await expect(page.locator(".map-placeholder")).toHaveCount(0);
-  await page.getByRole("button", { name: "Show tracking map" }).click();
   await expect(
-    page.getByRole("img", { name: /Illustrative tracking/ }),
+    page.getByText("No delivery pin saved for this order."),
   ).toBeVisible();
+  await expect(
+    page.getByText(
+      "No delivery-agent location is available for this demo order.",
+    ),
+  ).toBeVisible();
+  await expect(page.locator(".map-placeholder")).toHaveCount(0);
 });

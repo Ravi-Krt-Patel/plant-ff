@@ -1,0 +1,69 @@
+@base = http://localhost:4000/api
+# Use a REST client with its cookie jar enabled. Copy returned csrfToken/IDs/slot IDs below.
+@csrf = replace-from-session-response
+@quoteId = replace-from-quote-response
+@orderId = replace-from-order-response
+@attemptId = replace-from-payment-session-response
+@slotId = replace-from-serviceability-response
+
+### Catalog
+GET {{base}}/products?limit=6&sort=price-low
+
+### Guest session; stores HttpOnly cookie in the REST client's cookie jar
+POST {{base}}/auth/guest
+Content-Type: application/json
+
+{}
+
+### Session and CSRF token
+GET {{base}}/auth/session
+
+### Exact demo serviceability and dated slots
+POST {{base}}/serviceability/check
+Content-Type: application/json
+
+{"pin":"221001"}
+
+### Server quote
+POST {{base}}/checkout/quote
+Content-Type: application/json
+X-CSRF-Token: {{csrf}}
+
+{"lines":[{"id":"p1","variant":"nursery","quantity":1}],"address":{"name":"Demo Customer","phone":"9000000000","line":"12 Sample Garden Lane","locality":"Demo Varanasi","pin":"221001"},"slotId":"{{slotId}}","coupon":"GROW10"}
+
+### Create one commerce order
+POST {{base}}/orders
+Content-Type: application/json
+X-CSRF-Token: {{csrf}}
+Idempotency-Key: example-order-0001
+
+{"quoteId":"{{quoteId}}","quoteVersion":1,"method":"upi"}
+
+### Start a demo payment attempt
+POST {{base}}/orders/{{orderId}}/payment-sessions
+Content-Type: application/json
+X-CSRF-Token: {{csrf}}
+Idempotency-Key: example-attempt-0001
+
+{}
+
+### Explicit demo payment outcome
+POST {{base}}/payments/demo/{{attemptId}}/simulate
+Content-Type: application/json
+X-CSRF-Token: {{csrf}}
+
+{"outcome":"success"}
+
+### Order status
+GET {{base}}/orders/{{orderId}}
+
+### Timeline
+GET {{base}}/orders/{{orderId}}/tracking
+
+### Cancellation: a captured demo payment becomes refund_requested
+POST {{base}}/orders/{{orderId}}/cancellation-requests
+Content-Type: application/json
+X-CSRF-Token: {{csrf}}
+Idempotency-Key: example-cancel-0001
+
+{"reason":"Testing cancellation"}

@@ -1,9 +1,32 @@
 "use client";
 import Link from "next/link";
+import { apiEnabled } from "@/features/delivery/api";
+import { AddressBook } from "@/features/delivery/address-book";
+import { SessionPanel } from "@/features/delivery/session-panel";
 import { useStore } from "@/features/cart/store";
 import { UserRound, MapPin } from "lucide-react";
 export function Account({ addresses = false }: { addresses?: boolean }) {
   const store = useStore();
+  if (addresses)
+    return (
+      <div className="page wrap">
+        <p className="eyebrow">YOUR OWN LITTLE GREEN CORNER</p>
+        <h1 className="page-title">Your doorsteps.</h1>
+        <AddressBook />
+      </div>
+    );
+  if (apiEnabled)
+    return (
+      <div className="page wrap">
+        <h1 className="page-title">Your account.</h1>
+        <SessionPanel />
+        <div className="account-links">
+          <Link href="/account/addresses">Your addresses →</Link>
+          <Link href="/account/orders">Your orders →</Link>
+          <Link href="/track-order">Track an order →</Link>
+        </div>
+      </div>
+    );
   return (
     <div className="page wrap">
       <p className="eyebrow">YOUR OWN LITTLE GREEN CORNER</p>

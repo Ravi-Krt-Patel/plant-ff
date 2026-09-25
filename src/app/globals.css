@@ -1425,12 +1425,6 @@ details p {
     padding-top: 12px;
     padding-bottom: 12px;
   }
-  .nav.is-open {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-  }
   .nav a {
     padding: 10px 0;
     font-size: 14px;
@@ -1946,4 +1940,206 @@ body {
 .cart-row small,
 details p {
   color: #59664f;
+}
+
+/* The mobile navigation overlays the page instead of expanding the header. */
+.menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  background: rgb(20 36 26 / 45%);
+}
+.menu-drawer {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 71;
+  width: min(340px, 88vw);
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: max(24px, env(safe-area-inset-top)) 22px
+    max(24px, env(safe-area-inset-bottom));
+  background: #fdfcf8;
+  box-shadow: 12px 0 45px rgb(18 40 26 / 15%);
+}
+.menu-backdrop[data-state="open"] {
+  animation: menu-backdrop-in 240ms ease-out both;
+}
+.menu-backdrop[data-state="closed"] {
+  animation: menu-backdrop-out 200ms ease-in both;
+}
+.menu-drawer[data-state="open"] {
+  animation: menu-slide-in 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.menu-drawer[data-state="closed"] {
+  animation: menu-slide-out 240ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+.menu-drawer-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 25px;
+  border-bottom: 1px solid var(--line);
+}
+.menu-drawer .brand {
+  font-size: 25px;
+}
+.menu-drawer .brand svg {
+  width: 27px;
+}
+.menu-drawer .brand small {
+  font-size: 6px;
+  letter-spacing: 1.6px;
+}
+.menu-close {
+  min-width: 44px;
+  min-height: 44px;
+  border: 0;
+}
+.drawer-navigation {
+  display: flex;
+  flex-direction: column;
+  padding: 18px 0;
+}
+.drawer-navigation a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 54px;
+  padding: 12px 10px;
+  border-radius: 4px;
+  font-size: 15px;
+}
+.drawer-navigation a:hover,
+.drawer-navigation a[aria-current="page"] {
+  background: #edf0e5;
+}
+.drawer-navigation a svg {
+  color: #65765d;
+}
+.menu-drawer-note {
+  margin-top: auto;
+  padding: 24px 10px 0;
+  font:
+    italic 19px Georgia,
+    serif;
+  color: #59664f;
+}
+@keyframes menu-slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes menu-slide-out {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+@keyframes menu-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes menu-backdrop-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Address entry and saved delivery details share the checkout's visual language. */
+.delivery-section {
+  display: block;
+  margin-top: 22px;
+}
+.delivery-pin-field {
+  margin: 24px 0;
+}
+.delivery-pin-field > p {
+  font-size: 13px;
+  margin: 8px 0 14px;
+  line-height: 1.6;
+}
+.delivery-address-book {
+  margin-top: 24px;
+}
+.delivery-address-card,
+.delivery-editor {
+  margin-top: 20px;
+}
+.delivery-address-text {
+  font-style: normal;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.delivery-coordinate {
+  font-size: 12px;
+  margin-top: 12px;
+  color: #53624b;
+}
+.delivery-actions,
+.delivery-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 20px;
+  align-items: end;
+}
+.delivery-actions > button {
+  min-height: 44px;
+}
+.delivery-inline > label {
+  flex: 1;
+  min-width: 180px;
+}
+.delivery-session {
+  margin: 20px 0;
+}
+.delivery-session label,
+.delivery-editor label,
+.two-columns label {
+  display: block;
+}
+.delivery-session input,
+.delivery-session select,
+.delivery-editor select,
+.two-columns select {
+  width: 100%;
+  margin-top: 8px;
+}
+.delivery-session p {
+  margin: 12px 0;
+}
+.delivery-session code {
+  overflow-wrap: anywhere;
+}
+.two-columns > div,
+.two-columns > aside {
+  min-width: 0;
+}
+@media (max-width: 700px) {
+  .delivery-actions .button {
+    flex: 1 1 140px;
+  }
+  .delivery-inline > button {
+    width: 100%;
+  }
+  .delivery-editor,
+  .delivery-address-card {
+    padding: 20px;
+  }
 }

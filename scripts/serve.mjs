@@ -2,6 +2,7 @@ import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 const root = path.resolve("out");
+const port = Number(process.env.PORT || 3001);
 http
   .createServer((req, res) => {
     let file = path.resolve(
@@ -34,4 +35,6 @@ http
       res.end(fs.readFileSync(path.join(root, "404.html")));
     }
   })
-  .listen(3001, () => console.log("Production preview: http://localhost:3001"));
+  .listen(port, "127.0.0.1", () =>
+    console.log(`Production preview: http://127.0.0.1:${port}`),
+  );

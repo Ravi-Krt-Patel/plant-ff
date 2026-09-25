@@ -1,14 +1,14 @@
 "use client";
 import Link from "next/link";
+import { apiEnabled } from "@/features/delivery/api";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { MobileMenu } from "./mobile-menu";
+import { navigationLinks } from "./navigation";
 import {
   Search,
   Heart,
   ShoppingBag,
   UserRound,
-  Menu,
-  X,
   MapPin,
   ArrowUpRight,
 } from "lucide-react";
@@ -16,7 +16,6 @@ import { useStore } from "@/features/cart/store";
 import { Brand } from "./brand";
 export function Header() {
   const { lines } = useStore();
-  const [open, setOpen] = useState(false);
   const pathname = usePathname();
   return (
     <>
@@ -60,33 +59,15 @@ export function Header() {
               <ShoppingBag />
               <span>{lines.reduce((n, l) => n + l.quantity, 0)}</span>
             </Link>
-            <button
-              className="mobile-menu icon-button"
-              onClick={() => setOpen(!open)}
-              aria-label={open ? "Close menu" : "Open menu"}
-              aria-expanded={open}
-            >
-              {open ? <X /> : <Menu />}
-            </button>
+            <MobileMenu />
           </div>
         </div>
-        <nav
-          aria-label="Main navigation"
-          className={`nav wrap ${open ? "is-open" : ""}`}
-        >
-          {[
-            ["/shop", "Shop all plants"],
-            ["/collections/indoor-plants", "Indoor plants"],
-            ["/collections/outdoor-plants", "Outdoor plants"],
-            ["/collections/pots-planters", "Pots & planters"],
-            ["/collections/bundles", "Plant bundles"],
-            ["/plant-care", "Plant care"],
-          ].map(([url, title]) => (
+        <nav aria-label="Main navigation" className="nav wrap">
+          {navigationLinks.map(([url, title]) => (
             <Link
               key={url}
               href={url!}
               className={pathname === url ? "active" : ""}
-              onClick={() => setOpen(false)}
             >
               {title}
             </Link>
@@ -136,7 +117,9 @@ export function Footer() {
           <div>
             <h3>Here to help</h3>
             <Link href="/plant-care">Plant care guides</Link>
-            <Link href="/track-order">Track demo order</Link>
+            <Link href="/track-order">
+              {apiEnabled ? "Track order" : "Track demo order"}
+            </Link>
             <Link href="/faq">FAQs</Link>
             <Link href="/contact">Contact us</Link>
           </div>
@@ -163,8 +146,9 @@ export function Footer() {
         role="region"
         aria-label="Demo storefront notice"
       >
-        Demo storefront — sample products and simulated orders/payments. Use
-        fictitious details.
+        {apiEnabled
+          ? "Development store — orders and delivery details are saved to the configured backend. Payment provider mode is configured separately."
+          : "Demo storefront — sample products and simulated orders/payments. Use fictitious details."}
       </div>
     </>
   );

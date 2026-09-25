@@ -1,18 +1,13 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import dynamic from "next/dynamic";
+import { apiEnabled } from "@/features/delivery/api";
+import { ApiOrderList, ApiTrackingPage } from "./api-tracking";
+import { DemoDestination } from "./delivery-destination";
 import { CheckCircle2, Clock, Package, XCircle } from "lucide-react";
 import type { Order } from "@/contracts";
 import { useStore } from "@/features/cart/store";
 import { money, getProduct } from "@/mocks/catalog";
-const Map = dynamic(() => import("./map"), {
-  loading: () => (
-    <div className="map-placeholder" role="status">
-      Preparing illustrative map…
-    </div>
-  ),
-});
 import { orderIds } from "@/mocks/order-ids";
 const sample: Order = {
   id: "KG-SAMPLE-001",
@@ -32,7 +27,6 @@ export function OrderView({
   tracking?: boolean;
 }) {
   const { orders, setOrders, signedIn } = useStore();
-  const [showMap, setShowMap] = useState(false);
   const [sampleCancelled, setSampleCancelled] = useState(false);
   const order =
     id === sample.id
@@ -159,20 +153,7 @@ export function OrderView({
               ))}
             </ol>
           )}
-          {!showMap ? (
-            <button
-              className="button secondary"
-              onClick={() => setShowMap(true)}
-            >
-              Show tracking map
-            </button>
-          ) : (
-            <Map />
-          )}
-          <p style={{ fontSize: 11, marginTop: 15 }}>
-            Seeded snapshot · 20 September 2026, 10:30 am IST. Not live
-            tracking.
-          </p>
+          <DemoDestination address={order.deliveryAddress} />
         </section>
         <aside className="panel summary-panel">
           <h2>Your collection</h2>
@@ -229,6 +210,9 @@ export function OrderView({
   );
 }
 export function TrackingLookup() {
+  return apiEnabled ? <ApiTrackingPage /> : <DemoTrackingLookup />;
+}
+function DemoTrackingLookup() {
   const [id, setId] = useState("");
   const [message, setMessage] = useState("");
   return (
@@ -275,6 +259,9 @@ export function TrackingLookup() {
   );
 }
 export function OrderList() {
+  return apiEnabled ? <ApiOrderList /> : <DemoOrderList />;
+}
+function DemoOrderList() {
   const { signedIn, orders } = useStore();
   return (
     <div className="page wrap">
